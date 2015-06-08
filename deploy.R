@@ -1,7 +1,8 @@
 library(shinyapps)
 library(RODBC)
 library(shiny)
-
+library(scales)
+setwd("C:/Users/Phillip/Documents/RProjects/FishTicket")
 liftCxn <- odbcDriverConnect('driver=SQL Server;server=busprod.dfw.wa.lcl\\busprod;database=lift2000;trusted_connection=true')
 PhilsLiFtCxn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=//ssv.wa.lcl/dfw files/FP/FishMgmt/Weyland/WeylandToKari/LiFT.accdb")  
 liftData<-  sqlQuery(liftCxn,   'SELECT  Batch_Year as [YearLanded], s.Species_Code as [MarketCode], species_code_desc as [MarketName], g.gear_code as [GearCode], g.gear_desc as [GearName], ca.Catch_Area_Code as [CatchAreaCode], ca.Catch_area_desc as [CatchAreaName],  Port_Code as [PortCode], Fisher_Type_Code,  Ticket_Data_Source_Code, sum(Rptd_Price_Amt*Rptd_Lbs_Qty) as [SaleAmount], sum(Rptd_Lbs_Qty) as [ReportedPounds], sum(round_lbs_qty) as [RoundPounds]  
@@ -23,7 +24,10 @@ port <- sqlQuery(PhilsLiFtCxn, 'SELECT LiFT_PortCode, PortBodyOfWater from LiFT_
 liftData <- merge(liftData,area, by.x = "CatchAreaCode", by.y = "Catch_Area_Code", all.x = TRUE)
 liftData <- merge(liftData,market, by.x = "MarketCode", by.y = "LiFT_MarketCode", all.x = TRUE)
 liftData <- merge(liftData,port, by.x = "PortCode", by.y = "LiFT_PortCode", all.x = TRUE)
+liftData$SaleAmount <- scales::dollar(liftData$SaleAmount)
+liftData<-liftData[c("YearLanded", "PortCode", "PortBodyOfWater", "MarketCode", "MarketName" , "MGRP"   ,"CatchAreaCode", 
+           "CatchAreaName", "CatchAreaBodyOfWater" , "GearCode", "GearName",  "Fisher_Type_Code" , 
+           "Ticket_Data_Source_Code", "SaleAmount" , "ReportedPounds" ,  "RoundPounds")]
+write.csv(liftData, file = "liftdata.csv", row.names=FALSE)
+deployApp("C:/Users/Phillip/Documents/RProjects/FishTicket")
 
-
-write.csv(liftData, file = "C:/data/R Projects/ShinyApps/FishTicket/liftdata.csv")
-deployApp(appDir = "C:/data/R Projects/ShinyApps/FishTicket")
