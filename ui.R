@@ -1,8 +1,9 @@
 library(DT)
 library(shiny)
 library(ggplot2)
+library(leaflet)
+library(htmltools)
 liftData <- read.csv("liftdata.csv")
-
 navbarPage("Marine Fish Science Data Dashboard",
   tabPanel("Home"),
   navbarMenu("Fish Ticket",
@@ -23,5 +24,30 @@ navbarPage("Marine Fish Science Data Dashboard",
               )
               
     )
+  ),
+  navbarMenu("Coastal Unit",
+             tabPanel("Longline Survey",
+                      tabsetPanel(
+                        tabPanel("Map",
+                                 plotOutput('llmapPlot'))
+                      )),
+            
+             tabPanel("Nearshore Survey",
+                      tabsetPanel(
+                      tabPanel("Map",
+                              leafletOutput('tagmapPlot', height = '800px'))
+             )
+                      
+             )
+  ),
+  navbarMenu("PS Unit",
+             tabPanel("ROV Survey"),
+             tabPanel("ESA Listed Encounters",
+                      tabsetPanel(
+                        tabPanel("Map",
+                                 leafletOutput('ESAmap', height = '800px'))
+                      )
+                      
+             )
   )
 )

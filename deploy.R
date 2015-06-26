@@ -2,7 +2,10 @@ library(shinyapps)
 library(RODBC)
 library(shiny)
 library(scales)
-setwd("C:/Users/Phillip/Documents/RProjects/FishTicket")
+shinyapps::setAccountInfo(name='weyland',
+                          token='EE0C1E69AA303117FE3164CC41591030',
+                          secret='Ip57DB6UsJYuWtSMv6zk6VVNSedtUmDfEy6bcM6F')
+setwd("C:/Users/Phillip/Documents/R Projects/ShinyApps/MFS")
 liftCxn <- odbcDriverConnect('driver=SQL Server;server=busprod.dfw.wa.lcl\\busprod;database=lift2000;trusted_connection=true')
 PhilsLiFtCxn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=//ssv.wa.lcl/dfw files/FP/FishMgmt/Weyland/WeylandToKari/LiFT.accdb")  
 liftData<-  sqlQuery(liftCxn,   'SELECT  Batch_Year as [YearLanded], s.Species_Code as [MarketCode], species_code_desc as [MarketName], g.gear_code as [GearCode], g.gear_desc as [GearName], ca.Catch_Area_Code as [CatchAreaCode], ca.Catch_area_desc as [CatchAreaName],  Port_Code as [PortCode], Fisher_Type_Code,  Ticket_Data_Source_Code, sum(Rptd_Price_Amt*Rptd_Lbs_Qty) as [SaleAmount], sum(Rptd_Lbs_Qty) as [ReportedPounds], sum(round_lbs_qty) as [RoundPounds]  
@@ -29,5 +32,6 @@ liftData<-liftData[c("YearLanded", "PortCode", "PortBodyOfWater", "MarketCode", 
            "CatchAreaName", "CatchAreaBodyOfWater" , "GearCode", "GearName",  "Fisher_Type_Code" , 
            "Ticket_Data_Source_Code", "SaleAmount" , "ReportedPounds" ,  "RoundPounds")]
 write.csv(liftData, file = "liftdata.csv", row.names=FALSE)
-deployApp("C:/Users/Phillip/Documents/RProjects/FishTicket")
+shinyapps::setAccountInfo(name='wdfw', token='C36065A8B904A2461716CC5A8869263F', secret='1AKUrO8TO4WueOPp4hmmGDxL0ixDkBYGkgrgETZB')
+deployApp("C:/Users/Phillip/Documents/R Projects/ShinyApps/MFS", account = "wdfw", appName = "MFSReporting")
 
